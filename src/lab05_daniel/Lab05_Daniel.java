@@ -65,6 +65,10 @@ public class Lab05_Daniel extends Application{
                     excessOrSavedLbl.setText(String.format("%s: %.2f$", results[2] < 0? "Saved" : "Excess", Math.abs(results[2])));
                 } catch (Exception e) {
                     //Reset text if invalid characters to previous value or empty if invalid value
+                    if (field.getText().isBlank()) {
+                        priceCalcParams[thisIndex] = 0;
+                        return;
+                    }
                     field.setText(priceCalcParams[thisIndex] <= 0? "" : String.format("%.2f", priceCalcParams[thisIndex]));
                 }
             });
