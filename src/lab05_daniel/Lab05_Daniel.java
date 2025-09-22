@@ -19,7 +19,7 @@ import javafx.stage.Stage;
  */
 public class Lab05_Daniel extends Application{
     //Reimbursements
-    private final static double DAILY_MEALS = 0.37;
+    private final static double DAILY_MEALS = 37;
     private final static double PER_MILE = 0.27;
     private final static double DAILY_TAXI = 20;
     private final static double DAILY_PARKING = 10;
@@ -39,10 +39,10 @@ public class Lab05_Daniel extends Application{
         GridPane grid = new GridPane();
         BorderPane rootBorder = new BorderPane(grid);
         
-        String[] fieldNames = new String[] {"Days", "Airfare", "Rental fees","Miles driven", "Parking fees", "Taxi charges", "Registration fees", "Lodging charges"};
-        Label totalExpensesLbl = new Label("Total expenses: __");    
-        Label allowableExpensesLbl = new Label("Allowable expenses: __");
-        Label excessOrSavedLbl = new Label("Excess/Saved: __");
+        String[] fieldNames = new String[] {"Days: ", "Airfare: ", "Rental fees: ","Miles driven: ", "Parking fees: ", "Taxi charges: ", "Registration fees: ", "Lodging charges: "};
+        Label totalExpensesLbl = new Label("Total expenses: 0$");    
+        Label allowableExpensesLbl = new Label("Allowable expenses: 0$");
+        Label excessOrSavedLbl = new Label("Excess/Saved: 0$");
         grid.add(totalExpensesLbl, 1, 8);
         grid.add(allowableExpensesLbl, 1, 9);
         grid.add(excessOrSavedLbl, 1, 10);
@@ -51,27 +51,27 @@ public class Lab05_Daniel extends Application{
         for (int i = 0; i < fieldNames.length; i++) {
             TextField field = createInputField(fieldNames[i], grid, i);
             final int thisIndex = i;
-            field.setOnKeyPressed(keyEvent -> {
-                 try {
-                     double entry = Double.parseDouble(field.getText());
-                     if (entry < 0) {
-                         priceCalcParams[thisIndex] = 0;
-                         return;
-                     }
-                     //Since is money, round at cents (1/100)
-                     priceCalcParams[thisIndex] = Math.round(entry * 100) / 100 ;
-                     double[] results = processCalcTravelExpenses(priceCalcParams);
-                     totalExpensesLbl.setText("Total expenses: " + Double.toString(results[0]));
-                     allowableExpensesLbl.setText("Allowable expenses: " + Double.toString(results[1]));
-                     excessOrSavedLbl.setText(results[2] < 0? "Saved: " + Double.toString(-results[2]): "Excess: " + Double.toString(results[2]));
-                 } catch (Exception e) {
-                     priceCalcParams[thisIndex] = 0;
-                 }
+            field.setOnKeyReleased(keyEvent -> {
+                try {
+                    double entry = Double.parseDouble(field.getText());
+                    if (entry < 0) {
+                        priceCalcParams[thisIndex] = 0;
+                        return;
+                    }
+                    //Since is money, round at cents (1/100)
+                    priceCalcParams[thisIndex] = Math.round(entry * 100) / 100 ;
+                    double[] results = processCalcTravelExpenses(priceCalcParams);
+                    totalExpensesLbl.setText(String.format("Total expenses: %.2f$", results[0]));
+                    allowableExpensesLbl.setText(String.format("Allowable expenses: %.2f$", results[1]));
+                    excessOrSavedLbl.setText(String.format("%s: %.2f$", results[2] < 0? "Saved" : "Excess", Math.abs(results[2])));
+                } catch (Exception e) {
+                    priceCalcParams[thisIndex] = 0;
+                }
             });
         }
 
         //Show
-        Scene scene = new Scene(rootBorder);
+        Scene scene = new Scene(rootBorder, 750, 750);
         stage.setScene(scene);
         stage.show();
     }
