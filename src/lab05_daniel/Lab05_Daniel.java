@@ -38,8 +38,7 @@ public class Lab05_Daniel extends Application{
         //Setup parent elements
         GridPane grid = new GridPane();
         BorderPane rootBorder = new BorderPane(grid);
-        
-        String[] fieldNames = new String[] {"Days: ", "Airfare: ", "Rental fees: ","Miles driven: ", "Parking fees: ", "Taxi charges: ", "Registration fees: ", "Lodging charges: "};
+        String[] fieldNames = new String[] {"Days: ", "Airfare: ", "Rental fees: ","Miles driven: ", "Parking fees: ", "Taxi charges: ", "Registration fees: ", "Nightly lodging fees: "};
         Label totalExpensesLbl = new Label("Total expenses: 0$");    
         Label allowableExpensesLbl = new Label("Allowable expenses: 0$");
         Label excessOrSavedLbl = new Label("Excess/Saved: 0$");
@@ -72,6 +71,7 @@ public class Lab05_Daniel extends Application{
 
         //Show
         Scene scene = new Scene(rootBorder, 750, 750);
+        scene.getStylesheets().add("style.css");
         stage.setScene(scene);
         stage.show();
     }
@@ -95,7 +95,7 @@ public class Lab05_Daniel extends Application{
         //not counting miles driven since there is no stated fee for miles driven
         double totalExpenses = airfare + carRental + parkingFees + taxiCharges + registrationFees + lodgingCharges * (double) dayCount;
         double allowableExpenses = (double) dayCount * (DAILY_MEALS + DAILY_TAXI + DAILY_PARKING + DAILY_LODGING) + milesDriven * PER_MILE;
-        double excessExpenses = totalExpenses - allowableExpenses;
+        double excessExpenses = totalExpenses - allowableExpenses; //if under 0, this becomes total saved
         return new double[] {totalExpenses, allowableExpenses, excessExpenses};
     }
 }

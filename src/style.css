@@ -1,0 +1,11 @@
+.root {
+    -fx-background-color : grey;
+    -fx-font-size: 10pt;
+}
+
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 11pt;
+}
