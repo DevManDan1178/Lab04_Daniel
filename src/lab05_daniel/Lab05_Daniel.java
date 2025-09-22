@@ -4,9 +4,11 @@
  */
 package lab05_daniel;
 import javafx.application.Application;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -30,26 +32,44 @@ public class Lab05_Daniel extends Application{
         launch(args);
     }
     
+    
     @Override
     public void start(Stage stage) {
         //Setup parent elements
         GridPane grid = new GridPane();
         BorderPane rootBorder = new BorderPane(grid);
         
-        String[] fieldNames = new String[] {"Days", "Airfare", "Rental fees"," Miles driven", "Parking fees", "Taxi charges", "Registration fees", "Lodging charges"};
+        String[] fieldNames = new String[] {"Days", "Airfare", "Rental fees","Miles driven", "Parking fees", "Taxi charges", "Registration fees", "Lodging charges"};
+        Label totalExpensesLbl = new Label("Total expenses: __");    
+        Label allowableExpensesLbl = new Label("Allowable expenses: __");
+        Label excessOrSavedLbl = new Label("Excess/Saved: __");
+        grid.add(totalExpensesLbl, 1, 8);
+        grid.add(allowableExpensesLbl, 1, 9);
+        grid.add(excessOrSavedLbl, 1, 10);
+        double[] priceCalcParams = new double[8];
         
         for (int i = 0; i < fieldNames.length; i++) {
             TextField field = createInputField(fieldNames[i], grid, i);
+            final int thisIndex = i;
+            field.setOnKeyPressed(keyEvent -> {
+                 try {
+                     double entry = Double.parseDouble(field.getText());
+                     if (entry < 0) {
+                         priceCalcParams[thisIndex] = 0;
+                         return;
+                     }
+                     //Since is money, round at cents (1/100)
+                     priceCalcParams[thisIndex] = Math.round(entry * 100) / 100 ;
+                     double[] results = processCalcTravelExpenses(priceCalcParams);
+                     totalExpensesLbl.setText("Total expenses: " + Double.toString(results[0]));
+                     allowableExpensesLbl.setText("Allowable expenses: " + Double.toString(results[1]));
+                     excessOrSavedLbl.setText(results[2] < 0? "Saved: " + Double.toString(-results[2]): "Excess: " + Double.toString(results[2]));
+                 } catch (Exception e) {
+                     priceCalcParams[thisIndex] = 0;
+                 }
+            });
         }
-        //Setup text fields
-        TextField daysField = createInputField("Days", grid, 0);
-        TextField airFareField = createInputField("Airfaire", grid, 1);
-        TextField carRentalField = createInputField("Rental fees", grid, 2);
-        TextField milesDrivenField = createInputField("Miles driven", grid, 3);
-        TextField parkingFeesField = createInputField("Parking fees", grid, 4);
-        TextField taxiChargesField = createInputField("Taxi charges", grid, 5);
-        TextField registrationFeesField = createInputField("Registration fees", grid, 6);
-        TextField lodgingChargesField = createInputField("Lodging charges", grid, 7);
+
         //Show
         Scene scene = new Scene(rootBorder);
         stage.setScene(scene);
@@ -67,7 +87,10 @@ public class Lab05_Daniel extends Application{
         return txtField;
     }
     
-    // Array order : 
+    private double[] processCalcTravelExpenses(double[] args) {
+        return calcTravelExpenses((int) args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+    }
+    
     private double[] calcTravelExpenses(int dayCount, double airfare, double carRental, double milesDriven, double parkingFees, double taxiCharges, double registrationFees, double lodgingCharges)  {
         //not counting miles driven since there is no stated fee for miles driven
         double totalExpenses = airfare + carRental + parkingFees + taxiCharges + registrationFees + lodgingCharges * (double) dayCount;
